@@ -1,0 +1,6 @@
+{
+  "name": "cmo-seat",
+  "version": "1.0.0",
+  "description": "The CMO seat of the 50fold cofounder system, implemented as a working Claude Code plugin. A hybrid growth-and-brand operator that runs daily check-ins, weekly briefings, paid acquisition, influencer ops, content, metrics review, brand/PR, and experiment design, grounded in the company profile and founder constraints.",
+  "keywords": ["marketing", "cmo", "growth", "50fold", "agents"]
+}

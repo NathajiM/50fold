@@ -1,0 +1,193 @@
+{
+  "$comment": "Claudius dependency manifest. Claudius ORCHESTRATES these tools; it never vendors or installs them — each 'fix' is the tool's own native command. Adding a dependency is a JSON edit, not a code change.",
+  "groups": ["core", "claudius", "token", "optional", "roadmap"],
+  "checks": [
+    {
+      "id": "node",
+      "label": "Node.js",
+      "group": "core",
+      "kind": "command",
+      "command": "node",
+      "args": ["--version"],
+      "required": true,
+      "why": "runs the installer, doctor, and backup scripts",
+      "fix": "install Node 20+ from nodejs.org"
+    },
+    {
+      "id": "git",
+      "label": "git",
+      "group": "core",
+      "kind": "command",
+      "command": "git",
+      "args": ["--version"],
+      "required": true,
+      "why": "worktree chips and the merge step",
+      "fix": "install git"
+    },
+    {
+      "id": "agents",
+      "label": "agents installed",
+      "group": "claudius",
+      "kind": "glob",
+      "dir": "~/.claude/agents",
+      "pattern": "^claudius-.*\\.md$",
+      "expect": 5,
+      "required": true,
+      "why": "the pinned-model writers, planner, and advisors",
+      "fix": "node install.mjs"
+    },
+    {
+      "id": "skills",
+      "label": "skills installed",
+      "group": "claudius",
+      "kind": "glob",
+      "dir": "~/.claude/skills",
+      "pattern": "^claudius-",
+      "expect": 2,
+      "required": true,
+      "why": "dispatch doctrine + chip lifecycle",
+      "fix": "node install.mjs"
+    },
+    {
+      "id": "doctrine",
+      "label": "doctrine block",
+      "group": "claudius",
+      "kind": "contains",
+      "file": "~/.claude/CLAUDE.md",
+      "pattern": "<!-- claudius:start -->",
+      "required": true,
+      "why": "makes dispatch always-on in every session",
+      "fix": "node install.mjs"
+    },
+    {
+      "id": "verify-model",
+      "label": "verify gate model",
+      "group": "claudius",
+      "kind": "read",
+      "file": "~/.claude/claudius/verify-model",
+      "required": false,
+      "why": "which model runs the verification pass (default opus; escalates to fable for high-stakes work)",
+      "fix": "node verify-model.mjs opus|fable"
+    },
+    {
+      "id": "backup",
+      "label": "settings backup",
+      "group": "claudius",
+      "kind": "glob",
+      "dir": "~/.claude/claudius/backups",
+      "pattern": ".",
+      "min": 1,
+      "required": false,
+      "why": "snapshot of settings.json + CLAUDE.md before any installer can clobber them",
+      "fix": "node backup-settings.mjs"
+    },
+    {
+      "id": "rtk",
+      "label": "RTK",
+      "group": "token",
+      "kind": "command",
+      "command": "rtk",
+      "args": ["--version"],
+      "required": false,
+      "why": "compresses noisy command output 30-90% before it reaches context",
+      "fix": "install rtk (brew install rtk, or a release binary)"
+    },
+    {
+      "id": "rtk-hook",
+      "label": "RTK hook registered",
+      "group": "token",
+      "kind": "contains",
+      "file": "~/.claude/settings.json",
+      "pattern": "\"command\"\\s*:\\s*\"rtk hook",
+      "required": false,
+      "why": "the PreToolUse hook that rewrites Bash calls through rtk",
+      "fix": "rtk init -g  — CAUTION: rewrites settings.json; back it up first (node backup-settings.mjs)",
+      "note": "If RTK's banner claims 'No hook installed' while this check passes, suspect a UTF-8 BOM in settings.json (see the settings-bom check) — a BOM breaks RTK's parse of the file so it cannot see its own hook. Fix the BOM, not the hook. Never run `rtk init -g` to chase the banner."
+    },
+    {
+      "id": "settings-bom",
+      "label": "settings.json BOM-free",
+      "group": "token",
+      "kind": "nobom",
+      "file": "~/.claude/settings.json",
+      "required": false,
+      "why": "a UTF-8 BOM (written by PowerShell redirects like > or Set-Content) breaks strict JSON parsers — it is what made RTK report 'No hook installed' while the hook was in fact registered and saving ~31%",
+      "fix": "rewrite settings.json as UTF-8 without BOM (in PowerShell: Set-Content -Encoding utf8NoBOM, or use a plain editor)"
+    },
+    {
+      "id": "ponytail",
+      "label": "ponytail",
+      "group": "token",
+      "kind": "path",
+      "path": "~/.claude/plugins/marketplaces/ponytail",
+      "required": false,
+      "why": "code-necessity layer: the laziness ladder cuts LOC (~-54% claimed) before code is written. Its SubagentStart hook injects into Claudius writer subagents automatically, so Claudius does not duplicate the ruleset",
+      "fix": "claude plugin marketplace add DietrichGebert/ponytail && claude plugin install ponytail@ponytail",
+      "note": "Orthogonal to caveman (prose terseness) and RTK (command output) — all three cut different axes. Costs ~676 tok always-on."
+    },
+    {
+      "id": "find-skills",
+      "label": "find-skills",
+      "group": "optional",
+      "kind": "path",
+      "path": "~/.claude/skills/find-skills",
+      "required": false,
+      "why": "reuse-before-reinvent: search existing skills before hand-rolling",
+      "fix": "npx -y skills add vercel-labs/skills --skill find-skills --agent claude-code -g"
+    },
+    {
+      "id": "codex",
+      "label": "Codex CLI",
+      "group": "optional",
+      "kind": "command",
+      "command": "codex",
+      "args": ["--version"],
+      "required": false,
+      "why": "host for the Codex companion layer",
+      "fix": "install the Codex CLI (optional — only needed for the codex/ layer)"
+    },
+    {
+      "id": "codex-layer",
+      "label": "Codex companion installed",
+      "group": "optional",
+      "kind": "contains",
+      "file": "~/.codex/AGENTS.md",
+      "pattern": "<!-- codex-claudius:start -->",
+      "required": false,
+      "why": "mirrors the dispatch doctrine into Codex",
+      "fix": "npm run install:codex",
+      "note": "EXPERIMENTAL: inline model pinning in the agent TOMLs is unverified against codex 0.125.0 — confirm a role actually resolves at gpt-5.5/xhigh before relying on the routing."
+    },
+    {
+      "id": "bun",
+      "label": "Bun",
+      "group": "roadmap",
+      "kind": "command",
+      "command": "bun",
+      "args": ["--version"],
+      "required": false,
+      "why": "runtime + worker process manager required by claude-mem",
+      "fix": "npm i -g bun   (blocks the claude-mem trial until present)"
+    },
+    {
+      "id": "claude-mem",
+      "label": "claude-mem",
+      "group": "roadmap",
+      "kind": "path",
+      "path": "~/.claude-mem/settings.json",
+      "required": false,
+      "why": "cross-session memory layer; would fix chip/subagent context loss",
+      "fix": "npx claude-mem install   (scoped trial first — needs Bun)"
+    },
+    {
+      "id": "impeccable",
+      "label": "Impeccable",
+      "group": "roadmap",
+      "kind": "path",
+      "path": "~/.claude/skills/impeccable",
+      "required": false,
+      "why": "design-quality gate for UI work; P1 findings block a chip merge",
+      "fix": "npx impeccable install   (then /impeccable init per UI project)"
+    }
+  ]
+}

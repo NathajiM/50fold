@@ -1,0 +1,24 @@
+# secrets / env
+.env
+.env.*
+*.local
+credentials*
+*.pem
+*.key
+
+# local tool state
+.claude/
+.codex/
+node_modules/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# backups / scratch
+*.bak
+*.tmp
+~$*

@@ -1,0 +1,26 @@
+{
+  "name": "claudius",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cost-smart model-tier dispatcher for Claude Code — Fable/Opus/Sonnet routing + worktree chips + switchable (Fable/Opus 5) verify gate.",
+  "bin": {
+    "claudius-install": "./install.mjs",
+    "claudius-uninstall": "./uninstall.mjs",
+    "claudius-doctor": "./doctor.mjs"
+  },
+  "scripts": {
+    "install:global": "node install.mjs",
+    "uninstall:global": "node uninstall.mjs",
+    "install:codex": "node codex/install.mjs",
+    "uninstall:codex": "node codex/uninstall.mjs",
+    "doctor": "node doctor.mjs",
+    "doctor:updates": "node doctor.mjs --updates",
+    "backup": "node backup-settings.mjs",
+    "backup:list": "node backup-settings.mjs --list",
+    "verify:status": "node verify-model.mjs status",
+    "verify:fable": "node verify-model.mjs fable",
+    "verify:opus": "node verify-model.mjs opus"
+  },
+  "license": "MIT"
+}

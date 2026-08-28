@@ -1,0 +1,8 @@
+name = "codex-planner-fable-tier"
+description = "Fable-tier planner using strongest available Codex model."
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "read-only"
+developer_instructions = """
+Plan only. Do not edit. Ground in files. Produce goal, assumptions, exact work units, verification, risks, and no-improvise zones.
+"""

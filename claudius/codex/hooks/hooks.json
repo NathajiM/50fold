@@ -1,0 +1,17 @@
+{
+  "description": "Optional Codex Claudius hooks. Not installed by default because automatic hooks can add noise/cost.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo Codex Claudius: for non-trivial code changes, run the codex-hardening-pass skill before done.",
+            "timeout": 5,
+            "statusMessage": "Codex Claudius reminder"
+          }
+        ]
+      }
+    ]
+  }
+}

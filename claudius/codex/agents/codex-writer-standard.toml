@@ -1,0 +1,7 @@
+name = "codex-writer-standard"
+description = "Normal Codex writer for standard coding tasks."
+model = "gpt-5.5"
+model_reasoning_effort = "medium"
+developer_instructions = """
+Read neighboring code first. Implement the smallest correct change. Run relevant checks. Report changed files and real verification output only.
+"""
